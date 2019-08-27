@@ -1,13 +1,9 @@
 from flask import Flask, request, render_template, redirect
-from test import *
-from buildings import *
-from rform import *
 from ratingform import *
 from sentiment import *
 from flask import jsonify
 from jinja2 import Template
 import os
-from zipreport import *
 SECRET_KEY = os.urandom(32)
 app = Flask(__name__)
 app.config['SECRET_KEY'] = SECRET_KEY
@@ -43,43 +39,10 @@ def rating_post():
      out_df = pd.DataFrame({'extract':[extract],'rating':[likert]})
      out_df.to_csv('/home/ec2-user/efs-mnt/data/train_data_rating.csv',mode='a',header=False)
      return redirect(request.url)
-# Home page
-@app.route("/zip/", methods=['GET', 'POST'])
-def ziphome():
-    """Home page of app with form"""
-    # Create form
-    form = ReusableForm()
-    # On form entry and all conditions met
-
-    if form.validate_on_submit():
-            # Extract information
-        zipcode = request.form['zipcode']
-        input,script,div=get_report(zipcode=zipcode)
-        return render_template('report.html', 
-                               input=input,script=script,div=div)
-    elif form.validate()==False:
-        print("")
-    # Send template information to index.html
-    return render_template('index.html', form=form)
-@app.route('/api/addresses/', methods=['GET'])
-def addresses():
-    reqargs = request.args.to_dict()
-    zipcode = reqargs['zipcode']
-    state = reqargs['state']
-    results = get_address(zipcode,state)
-    return jsonify(results)
-@app.route('/api/buildings/',methods=['GET'])
-def buildings():
-   reqargs = request.args.to_dict()
-   zipcode = reqargs['zipcode']
-   results = get_buildings(zipcode)
-   return jsonify(results)
 
 
 if __name__ == '__main__':  
     app.run(host='0.0.0.0',debug=True)
-
-#https://stackoverflow.com/questions/45583828/python-flask-not-updating-images
 
 @app.after_request
 def add_header(response):
