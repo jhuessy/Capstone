@@ -12,7 +12,7 @@ def sentiment_viz():
     import numpy as np
     import datetime
     #query mysql for article data and aggregate by day
-    con = db.create_engine('mysql+mysqlconnector://capstone_user:C@pstone-g3t@localhost:3306/capstone')
+    con = db.create_engine('mysql+mysqlconnector://*******************')
     df = pd.read_sql('SELECT * FROM articles', con=con)
     df['publishedAt'] = pd.to_datetime(df['publishedAt'])
     df['date_only']=df['publishedAt'].apply(lambda x: x.date())
